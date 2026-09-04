@@ -30,8 +30,12 @@ const QUESTIONS = {
   es: `Después, de forma conversacional, averigua: (1) su nombre completo tal como quiere que se escriba; (2) de qué trata el asunto legal, en sus propias palabras — haz una pregunta de seguimiento si no queda claro; (3) el nombre de cualquier otra parte involucrada (persona o empresa), que el despacho necesita para verificar conflictos de interés; (4) si hay alguna fecha límite, fecha de corte o audiencia próxima, y cuándo; (5) qué tan urgente le parece; (6) el mejor día y hora para localizarle; (7) si da su consentimiento para que el despacho le contacte por teléfono y correo electrónico. No menciones honorarios, no des asesoría legal, no prometas resultados. Si hace una pregunta legal, di que un abogado la responderá en la consulta. Mantén la llamada por debajo de cuatro minutos. Cierra diciendo que un abogado revisará la información y el despacho se comunicará.`,
 };
 
+// TTS reads "Nota.Lawyer" as "Nota dot Lawyer" — speak the brand without the dot.
+const spoken = (firm) => String(firm || "the firm").replace(/\./g, " ").replace(/\s+/g, " ").trim();
+
 export function intakeTask({ lang, firm, name, matterHint }) {
   const l = lang === "es" ? "es" : "en";
+  firm = spoken(firm);
   const hint = matterHint
     ? (l === "es" ? ` En el formulario escribió: "${matterHint}".` : ` On the form they wrote: "${matterHint}".`)
     : "";
@@ -39,6 +43,7 @@ export function intakeTask({ lang, firm, name, matterHint }) {
 }
 
 export function reminderTask({ lang, firm, name, when }) {
+  firm = spoken(firm);
   return lang === "es"
     ? `Eres la asistente de ${firm}. Llama a ${name} para recordarle su consulta con un abogado el ${when}. Confirma si podrá asistir; si no, pregunta qué día y hora le conviene. Sé breve y amable. No des asesoría legal.`
     : `You are the assistant for ${firm}. Call ${name} to remind them of their consultation with an attorney on ${when}. Confirm whether they can make it; if not, ask what day and time works instead. Be brief and warm. Do not give legal advice.`;

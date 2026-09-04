@@ -14,6 +14,8 @@ export async function onRequestPost({ request, env }) {
   if (!name || !/^\+\d{8,15}$/.test(phone) || body.consent !== true) {
     return json({ error: "missing_fields" }, 400);
   }
+  // The name is spoken on the call ("is this …?") — require something a person would answer to.
+  if (!/^\p{L}[\p{L}\s'.-]{1,}$/u.test(name)) return json({ error: "bad_name" }, 400);
   const reg = regionFor(phone);
   if (!reg) return json({ error: "unsupported_country" }, 400);
   const chosen = reg.locales.find(([code]) => code === locale) || reg.locales[0];

@@ -6,7 +6,7 @@ compatibility_flags = ["nodejs_compat"]
 # Create with: npx wrangler kv namespace create INTAKES   (then paste the id here)
 [[kv_namespaces]]
 binding = "INTAKES"
-id = "REPLACE_WITH_NAMESPACE_ID"
+id = "11862678fb264e8994d79f4c01c67851"
 
 [vars]
 FIRM_NAME = "Nota.Lawyer"
