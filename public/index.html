@@ -67,7 +67,7 @@ const I18N = {
     consent: "I agree to receive a call from Nota.Lawyer at this number. This call collects information only; it is not legal advice and does not create an attorney-client relationship.",
     go: "Call me now", calling: "Calling you now at {phone} — please pick up.", done: "Thank you — an attorney will review your information and follow up.",
     err: "We couldn't place the call: {m}", missing: "Please fill in your name, phone number and consent.",
-    hint1: "Interview languages available for {country} numbers: {langs}.", hintES: "Spanish interviews are available for Mexico numbers. For US numbers the call is in English; you may still describe your matter in Spanish below.",
+    hint1: "Interview languages available for {country} numbers: {langs}.", hintES: "Spanish interviews are available for Mexico, Spain and Honduras numbers. For US numbers the call is in English; you may still describe your matter in Spanish below.",
     foot: "Available languages depend on the country of the phone number."
   },
   es: {
@@ -76,16 +76,26 @@ const I18N = {
     consent: "Acepto recibir una llamada de Nota.Lawyer a este número. La llamada solo recopila información; no es asesoría legal ni crea una relación abogado-cliente.",
     go: "Llámenme ahora", calling: "Le estamos llamando al {phone} — por favor conteste.", done: "Gracias — un abogado revisará su información y se comunicará con usted.",
     err: "No pudimos realizar la llamada: {m}", missing: "Por favor complete su nombre, teléfono y consentimiento.",
-    hint1: "Idiomas disponibles para números de {country}: {langs}.", hintES: "Las entrevistas en español están disponibles para números de México. Para números de EE. UU. la llamada es en inglés; puede describir su asunto en español abajo.",
+    hint1: "Idiomas disponibles para números de {country}: {langs}.", hintES: "Las entrevistas en español están disponibles para números de México, España y Honduras. Para números de EE. UU. la llamada es en inglés; puede describir su asunto en español abajo.",
     foot: "Los idiomas disponibles dependen del país del número de teléfono."
   }
 };
-const CC = [["1","🇺🇸 +1 US/CA","United States / Canada","Estados Unidos / Canadá"],["52","🇲🇽 +52 MX","Mexico","México"],["55","🇧🇷 +55 BR","Brazil","Brasil"],["44","🇬🇧 +44 UK","United Kingdom","Reino Unido"],["33","🇫🇷 +33 FR","France","Francia"],["49","🇩🇪 +49 DE","Germany","Alemania"],["61","🇦🇺 +61 AU","Australia","Australia"],["91","🇮🇳 +91 IN","India","India"],["81","🇯🇵 +81 JP","Japan","Japón"],["84","🇻🇳 +84 VN","Vietnam","Vietnam"],["65","🇸🇬 +65 SG","Singapore","Singapur"],["971","🇦🇪 +971 AE","UAE","EAU"]];
-const LOCALES = {"1":[["en-US","English"]],"52":[["es-MX","Español"],["en-US","English"]],"55":[["pt-BR","Português"],["en-US","English"]],"44":[["en-GB","English"]],"61":[["en-AU","English"]],"91":[["en-IN","English"],["hi","हिन्दी"]],"33":[["fr","Français"],["en-US","English"]],"49":[["de","Deutsch"],["en-US","English"]],"81":[["ja","日本語"],["en-US","English"]],"84":[["vi","Tiếng Việt"],["en-US","English"]],"65":[["en-US","English"]],"971":[["ar","العربية"],["en-US","English"]]};
+// Country/language matrix comes from CALL-E's published table (public/regions.json, 42 countries).
+let REGIONS = {"1":{"region":"US","country":"United States","line":"Local","locales":[["en-US","English"]]}};
+let CC = [], LOCALES = {};
+const flag = r => String.fromCodePoint(...[...r].map(c => 0x1F1E6 + c.charCodeAt(0) - 65));
+function buildCountries() {
+  CC = Object.entries(REGIONS).map(([v, r]) => [v, `${flag(r.region)} +${v} ${r.region}`, r.country, r.line])
+    .sort((a, b) => (a[3] === b[3] ? a[2].localeCompare(b[2]) : a[3] === "Local" ? -1 : 1));
+  LOCALES = Object.fromEntries(Object.entries(REGIONS).map(([v, r]) => [v, r.locales]));
+}
+buildCountries();
 let lang = (navigator.language||"en").startsWith("es") ? "es" : "en";
 const $ = s => document.querySelector(s);
 const cc = $("#cc"), loc = $("#locale"), msg = $("#msg");
-CC.forEach(([v,label]) => cc.add(new Option(label, v)));
+function fillCountries() { const cur = cc.value; cc.innerHTML = ""; CC.forEach(([v,label]) => cc.add(new Option(label, v))); cc.value = CC.some(c=>c[0]===cur) ? cur : "1"; }
+fillCountries();
+fetch("/regions.json").then(r => r.json()).then(j => { REGIONS = j; buildCountries(); fillCountries(); render(); }).catch(() => {});
 function t(k, vars={}) { return (I18N[lang][k]||k).replace(/{(\w+)}/g, (_,x)=>vars[x]??""); }
 function render() {
   document.documentElement.lang = lang;
@@ -95,7 +105,7 @@ function render() {
   opts.forEach(([v,l]) => loc.add(new Option(l, v)));
   const pref = lang==="es" ? opts.find(o=>o[0].startsWith("es")) : opts.find(o=>o[0].startsWith("en"));
   loc.value = opts.some(o=>o[0]===cur) ? cur : (pref||opts[0])[0];
-  const country = CC.find(c=>c[0]===cc.value); const cname = lang==="es"?country[3]:country[2];
+  const country = CC.find(c=>c[0]===cc.value) || CC[0]; const cname = country[2];
   let h = t("hint1", {country: cname, langs: opts.map(o=>o[1]).join(", ")});
   if (lang==="es" && !opts.some(o=>o[0].startsWith("es"))) h += " " + t("hintES");
   $("#langhint").textContent = h;
