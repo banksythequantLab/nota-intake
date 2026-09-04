@@ -45,7 +45,7 @@ async function load(sync) {
 }
 function card(x) {
   const res = x.result || {};
-  const rows = [["Name", res.full_name || x.form.name], ["Phone", `${x.form.phone} · ${x.form.region} · ${x.form.locale}`],
+  const rows = [["Name", res.full_name || x.form.name], ["Phone", `${x.form.phone} · ${x.form.region} · ${x.form.locale}`], ["Email", res.email && res.email !== "none" ? res.email : x.form.email],
     ["Matter type", res.matter_type], ["Summary", res.matter_summary || x.form.matter], ["Opposing party (conflict check)", res.opposing_party],
     ["Urgency", res.urgency], ["Deadline / court date", res.deadline_or_court_date], ["Best time to call", res.best_time_to_call],
     ["Consent to contact", res.consent_to_contact], ["Confidence", x.confidence ? `${x.confidence.label} (${x.confidence.score})` : ""], ["Failure", x.failure]]

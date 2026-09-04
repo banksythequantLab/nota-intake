@@ -5,6 +5,7 @@ export const RESULT_SCHEMA = {
   required: ["full_name", "matter_type", "matter_summary", "urgency", "consent_to_contact"],
   properties: {
     full_name: { type: "string" },
+    email: { type: "string", description: "Email address as the caller spelled it, or 'none'" },
     preferred_language: { type: "string" },
     matter_type: {
       type: "string",
@@ -26,20 +27,24 @@ const PREAMBLE = {
 };
 
 const QUESTIONS = {
-  en: `Then, conversationally, learn: (1) their full name as they want it written; (2) what the legal matter is about, in their own words — ask one follow-up if unclear; (3) the name of any other party involved (person or company), which the firm needs for a conflict check; (4) whether there is any deadline, court date or hearing coming up, and when; (5) how urgent this feels to them; (6) the best day and time to reach them; (7) whether they consent to the firm contacting them by phone and email. Do not quote fees, do not give legal advice, do not promise outcomes. If they ask a legal question, say an attorney will address it in the consultation. Keep the call under four minutes. Close by saying an attorney will review and the firm will follow up.`,
-  es: `Después, de forma conversacional, averigua: (1) su nombre completo tal como quiere que se escriba; (2) de qué trata el asunto legal, en sus propias palabras — haz una pregunta de seguimiento si no queda claro; (3) el nombre de cualquier otra parte involucrada (persona o empresa), que el despacho necesita para verificar conflictos de interés; (4) si hay alguna fecha límite, fecha de corte o audiencia próxima, y cuándo; (5) qué tan urgente le parece; (6) el mejor día y hora para localizarle; (7) si da su consentimiento para que el despacho le contacte por teléfono y correo electrónico. No menciones honorarios, no des asesoría legal, no prometas resultados. Si hace una pregunta legal, di que un abogado la responderá en la consulta. Mantén la llamada por debajo de cuatro minutos. Cierra diciendo que un abogado revisará la información y el despacho se comunicará.`,
+  en: `Immediately after that, without pausing or waiting, ask the first question. Conversationally, learn: (1) confirm the spelling of their name if it is unusual, otherwise move on; (2) what the legal matter is about, in their own words — ask one follow-up if unclear; (3) the name of any other party involved (person or company), which the firm needs for a conflict check; (4) whether there is any deadline, court date or hearing coming up, and when; (5) how urgent this feels to them; (6) the best day and time to reach them — if the time could be morning or evening, ask which; (7) their email address, and read it back letter by letter to confirm{emailKnown}; (8) whether they consent to the firm contacting them by phone and email. Do not quote fees, do not give legal advice, do not promise outcomes. If they ask a legal question, say an attorney will address it in the consultation. Keep the call under four minutes. Close by saying an attorney will review and the firm will follow up.`,
+  es: `Inmediatamente después, sin pausas ni esperas, haz la primera pregunta. De forma conversacional, averigua: (1) confirma la ortografía de su nombre si es poco común; si no, continúa; (2) de qué trata el asunto legal, en sus propias palabras — haz una pregunta de seguimiento si no queda claro; (3) el nombre de cualquier otra parte involucrada (persona o empresa), que el despacho necesita para verificar conflictos de interés; (4) si hay alguna fecha límite, fecha de corte o audiencia próxima, y cuándo; (5) qué tan urgente le parece; (6) el mejor día y hora para localizarle — si la hora podría ser de mañana o de noche, pregunta cuál; (7) su correo electrónico, y repítelo letra por letra para confirmarlo{emailKnown}; (8) si da su consentimiento para que el despacho le contacte por teléfono y correo electrónico. No menciones honorarios, no des asesoría legal, no prometas resultados. Si hace una pregunta legal, di que un abogado la responderá en la consulta. Mantén la llamada por debajo de cuatro minutos. Cierra diciendo que un abogado revisará la información y el despacho se comunicará.`,
 };
 
 // TTS reads "Nota.Lawyer" as "Nota dot Lawyer" — speak the brand without the dot.
 const spoken = (firm) => String(firm || "the firm").replace(/\./g, " ").replace(/\s+/g, " ").trim();
 
-export function intakeTask({ lang, firm, name, matterHint }) {
+export function intakeTask({ lang, firm, name, matterHint, email }) {
   const l = lang === "es" ? "es" : "en";
   firm = spoken(firm);
   const hint = matterHint
     ? (l === "es" ? ` En el formulario escribió: "${matterHint}".` : ` On the form they wrote: "${matterHint}".`)
     : "";
-  return PREAMBLE[l].replace(/{firm}/g, firm).replace(/{name}/g, name) + hint + " " + QUESTIONS[l];
+  const emailKnown = email
+    ? (l === "es" ? ` — en el formulario dio ${email}; solo confirma que es correcto` : ` — the form has ${email}; just confirm it is correct`)
+    : "";
+  return PREAMBLE[l].replace(/{firm}/g, firm).replace(/{name}/g, name) + hint + " "
+       + QUESTIONS[l].replace("{emailKnown}", emailKnown);
 }
 
 export function reminderTask({ lang, firm, name, when }) {

@@ -11,6 +11,8 @@ export async function onRequestPost({ request, env }) {
   const lang = body.lang === "es" ? "es" : "en";
   const locale = (body.locale || "").trim();
   const matterHint = (body.matter || "").trim().slice(0, 500);
+  const email = (body.email || "").trim().slice(0, 120);
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json({ error: "bad_email" }, 400);
   if (!name || !/^\+\d{8,15}$/.test(phone) || body.consent !== true) {
     return json({ error: "missing_fields" }, 400);
   }
@@ -33,7 +35,7 @@ export async function onRequestPost({ request, env }) {
       "idempotency-key": id,
     },
     body: JSON.stringify({
-      task: intakeTask({ lang: interviewLang, firm, name, matterHint }),
+      task: intakeTask({ lang: interviewLang, firm, name, matterHint, email }),
       recipients: [{ phones: [phone], region: reg.region, locale: chosen[0] }],
       recipient_result_schema: RESULT_SCHEMA,
       webhook_url: webhook,
@@ -48,7 +50,7 @@ export async function onRequestPost({ request, env }) {
 
   const record = {
     id, created_at: new Date().toISOString(), status: "calling",
-    form: { name, phone, lang, matter: matterHint, locale: chosen[0], region: reg.region },
+    form: { name, phone, email, lang, matter: matterHint, locale: chosen[0], region: reg.region },
     call_id: calle.id, calle_status: calle.status, result: null, transcript: null, summary: null,
     reminders: [],
   };

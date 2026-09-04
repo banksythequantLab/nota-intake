@@ -46,6 +46,8 @@
         <input name="num" inputmode="tel" autocomplete="tel-national" placeholder="917 555 0100" required>
       </div>
       <div class="hint" id="langhint"></div>
+      <label data-i="email"></label>
+      <input name="email" type="email" autocomplete="email" placeholder="you@example.com">
       <label data-i="ilang"></label>
       <select name="locale" id="locale"></select>
       <label data-i="matter"></label>
@@ -61,7 +63,7 @@
 const I18N = {
   en: {
     title: "Request a consultation", lead: "Leave your name and number. Our intake assistant will call you back within a minute and take down the details — in the language you choose.",
-    name: "Your name", phone: "Phone number", ilang: "Interview language", matter: "What is this about? (optional)",
+    name: "Your name", phone: "Phone number", email: "Email (optional — we'll confirm it on the call)", ilang: "Interview language", matter: "What is this about? (optional)",
     consent: "I agree to receive a call from Nota.Lawyer at this number. This call collects information only; it is not legal advice and does not create an attorney-client relationship.",
     go: "Call me now", calling: "Calling you now at {phone} — please pick up.", done: "Thank you — an attorney will review your information and follow up.",
     err: "We couldn't place the call: {m}", missing: "Please fill in your name, phone number and consent.",
@@ -70,7 +72,7 @@ const I18N = {
   },
   es: {
     title: "Solicite una consulta", lead: "Deje su nombre y número. Nuestra asistente de admisión le llamará en menos de un minuto para tomar los datos — en el idioma que elija.",
-    name: "Su nombre", phone: "Número de teléfono", ilang: "Idioma de la entrevista", matter: "¿De qué se trata? (opcional)",
+    name: "Su nombre", phone: "Número de teléfono", email: "Correo electrónico (opcional — lo confirmaremos en la llamada)", ilang: "Idioma de la entrevista", matter: "¿De qué se trata? (opcional)",
     consent: "Acepto recibir una llamada de Nota.Lawyer a este número. La llamada solo recopila información; no es asesoría legal ni crea una relación abogado-cliente.",
     go: "Llámenme ahora", calling: "Le estamos llamando al {phone} — por favor conteste.", done: "Gracias — un abogado revisará su información y se comunicará con usted.",
     err: "No pudimos realizar la llamada: {m}", missing: "Por favor complete su nombre, teléfono y consentimiento.",
@@ -107,7 +109,7 @@ $("#f").onsubmit = async e => {
   const btn = f.querySelector("button.go"); btn.disabled = true;
   try {
     const r = await fetch("/api/intake", {method:"POST", headers:{"content-type":"application/json"},
-      body: JSON.stringify({name:f.name.value.trim(), phone, lang, locale:loc.value, matter:f.matter.value.trim(), consent:true})});
+      body: JSON.stringify({name:f.name.value.trim(), phone, email:f.email.value.trim(), lang, locale:loc.value, matter:f.matter.value.trim(), consent:true})});
     const j = await r.json();
     if (!r.ok) throw new Error(j.message || j.error || r.status);
     msg.className = "msg ok"; msg.textContent = t("calling", {phone}) + " " + t("done");
