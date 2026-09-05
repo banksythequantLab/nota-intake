@@ -1,6 +1,6 @@
 // POST /api/intake  — form submission -> CALL-E phone interview
 import { json, regionFor } from "../_lib.js";
-import { intakeTask, RESULT_SCHEMA } from "../_intake.js";
+import { intakeTask, scriptLang, RESULT_SCHEMA } from "../_intake.js";
 
 export async function onRequestPost({ request, env }) {
   let body;
@@ -8,7 +8,7 @@ export async function onRequestPost({ request, env }) {
 
   const name = (body.name || "").trim().slice(0, 120);
   const phone = (body.phone || "").replace(/[^\d+]/g, "");
-  const lang = body.lang === "es" ? "es" : "en";
+  const lang = ["es", "id"].includes(body.lang) ? body.lang : "en";   // UI language, for the record
   const locale = (body.locale || "").trim();
   const matterHint = (body.matter || "").trim().slice(0, 500);
   const email = (body.email || "").trim().slice(0, 120);
@@ -21,7 +21,7 @@ export async function onRequestPost({ request, env }) {
   const reg = regionFor(phone);
   if (!reg) return json({ error: "unsupported_country" }, 400);
   const chosen = reg.locales.find(([code]) => code === locale) || reg.locales[0];
-  const interviewLang = chosen[0].startsWith("es") ? "es" : "en";
+  const interviewLang = scriptLang(chosen[0]);
 
   const id = "intake_" + crypto.randomUUID();
   const firm = env.FIRM_NAME || "the firm";

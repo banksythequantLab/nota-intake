@@ -32,7 +32,7 @@
 <div class="wrap">
   <header>
     <div class="brand">Nota<span>.</span>Lawyer</div>
-    <div class="lang"><button data-l="en" class="on">English</button> <button data-l="es">Español</button></div>
+    <div class="lang"><button data-l="en" class="on">English</button> <button data-l="es">Español</button> <button data-l="id">Bahasa</button></div>
   </header>
   <div class="card">
     <h1 data-i="title"></h1>
@@ -78,6 +78,15 @@ const I18N = {
     err: "No pudimos realizar la llamada: {m}", missing: "Por favor complete su nombre, teléfono y consentimiento.",
     hint1: "Idiomas disponibles para números de {country}: {langs}.", hintES: "Las entrevistas en español están disponibles para números de México, España y Honduras. Para números de EE. UU. la llamada es en inglés; puede describir su asunto en español abajo.",
     foot: "Los idiomas disponibles dependen del país del número de teléfono."
+  },
+  id: {
+    title: "Minta konsultasi", lead: "Tinggalkan nama dan nomor Anda. Asisten penerimaan kami akan menelepon Anda kembali dalam satu menit untuk mencatat detailnya — dalam bahasa yang Anda pilih.",
+    name: "Nama Anda", phone: "Nomor telepon", email: "Email (opsional — akan kami pastikan saat panggilan)", ilang: "Bahasa wawancara", matter: "Tentang apa ini? (opsional)",
+    consent: "Saya setuju menerima panggilan dari Nota.Lawyer di nomor ini. Panggilan ini hanya mengumpulkan informasi; bukan nasihat hukum dan tidak menciptakan hubungan pengacara-klien.",
+    go: "Telepon saya sekarang", calling: "Kami sedang menelepon Anda di {phone} — mohon angkat.", done: "Terima kasih — seorang pengacara akan meninjau informasi Anda dan menghubungi kembali.",
+    err: "Kami tidak dapat melakukan panggilan: {m}", missing: "Mohon isi nama, nomor telepon, dan persetujuan Anda.",
+    hint1: "Bahasa wawancara yang tersedia untuk nomor {country}: {langs}.", hintES: "Wawancara dalam Bahasa Indonesia tersedia untuk nomor AS. Untuk nomor lain, pilih bahasa yang tersedia di atas.",
+    foot: "Bahasa yang tersedia bergantung pada negara nomor telepon."
   }
 };
 // Country/language matrix comes from CALL-E's published table (public/regions.json, 42 countries).
@@ -90,7 +99,7 @@ function buildCountries() {
   LOCALES = Object.fromEntries(Object.entries(REGIONS).map(([v, r]) => [v, r.locales]));
 }
 buildCountries();
-let lang = (navigator.language||"en").startsWith("es") ? "es" : "en";
+let lang = (["es","id"].find(l => (navigator.language||"en").toLowerCase().startsWith(l))) || "en";
 const $ = s => document.querySelector(s);
 const cc = $("#cc"), loc = $("#locale"), msg = $("#msg");
 function fillCountries() { const cur = cc.value; cc.innerHTML = ""; CC.forEach(([v,label]) => cc.add(new Option(label, v))); cc.value = CC.some(c=>c[0]===cur) ? cur : "1"; }
@@ -103,11 +112,11 @@ function render() {
   document.querySelectorAll(".lang button").forEach(b => b.classList.toggle("on", b.dataset.l===lang));
   const opts = LOCALES[cc.value]||[]; const cur = loc.value; loc.innerHTML = "";
   opts.forEach(([v,l]) => loc.add(new Option(l, v)));
-  const pref = lang==="es" ? opts.find(o=>o[0].startsWith("es")) : opts.find(o=>o[0].startsWith("en"));
+  const pref = opts.find(o=>o[0].startsWith(lang)) || opts.find(o=>o[0].startsWith("en"));
   loc.value = opts.some(o=>o[0]===cur) ? cur : (pref||opts[0])[0];
   const country = CC.find(c=>c[0]===cc.value) || CC[0]; const cname = country[2];
   let h = t("hint1", {country: cname, langs: opts.map(o=>o[1]).join(", ")});
-  if (lang==="es" && !opts.some(o=>o[0].startsWith("es"))) h += " " + t("hintES");
+  if (lang!=="en" && !opts.some(o=>o[0].startsWith(lang))) h += " " + t("hintES");
   $("#langhint").textContent = h;
 }
 document.querySelectorAll(".lang button").forEach(b => b.onclick = () => { lang = b.dataset.l; render(); });

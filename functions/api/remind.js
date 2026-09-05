@@ -1,6 +1,6 @@
 // POST /api/remind?token=…  {id, when}  — schedule a consultation reminder call in the client's language
 import { json } from "../_lib.js";
-import { reminderTask, REMINDER_SCHEMA } from "../_intake.js";
+import { reminderTask, scriptLang, REMINDER_SCHEMA } from "../_intake.js";
 
 export async function onRequestPost({ request, env }) {
   const t = new URL(request.url).searchParams.get("token") || request.headers.get("x-review-token");
@@ -9,7 +9,7 @@ export async function onRequestPost({ request, env }) {
   const raw = id && await env.INTAKES.get(id);
   if (!raw || !when) return json({ error: "not_found" }, 404);
   const rec = JSON.parse(raw);
-  const lang = rec.form.locale.startsWith("es") ? "es" : "en";
+  const lang = scriptLang(rec.form.locale);
   const name = rec.result?.full_name || rec.form.name;
   const key = `${id}_rem_${rec.reminders.length + 1}`;
 
