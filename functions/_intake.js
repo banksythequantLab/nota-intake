@@ -44,8 +44,13 @@ const HINT = {
   id: (m) => ` Di formulir ia menulis: "${m}".`,
 };
 
-// TTS reads "Nota.Lawyer" as "Nota dot Lawyer" — speak the brand without the dot.
-const spoken = (firm) => String(firm || "the firm").replace(/\./g, " ").replace(/\s+/g, " ").trim();
+// The brand "Nota.Lawyer" is pronounced "Not a Lawyer". TTS would read it as "Nota dot Lawyer",
+// so the script always speaks the firm name in its pronounceable form (FIRM_SPOKEN overrides).
+const SPOKEN_NAMES = { "nota.lawyer": "Not a Lawyer" };
+const spoken = (firm) => {
+  const f = String(firm || "the firm").trim();
+  return SPOKEN_NAMES[f.toLowerCase()] || f.replace(/\./g, " ").replace(/\s+/g, " ").trim();
+};
 
 // Interview script language from a CALL-E locale code (en-US, es, id, …).
 export function scriptLang(locale) {
