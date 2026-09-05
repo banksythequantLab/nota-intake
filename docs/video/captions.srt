@@ -1,0 +1,115 @@
+1
+00:00:00,400 --> 00:00:03,184
+Small law firms lose clients in the intake form.
+
+2
+00:00:03,234 --> 00:00:06,963
+Older clients, people at work, anyone reading a second language.
+
+3
+00:00:07,013 --> 00:00:08,203
+They don't finish it.
+
+4
+00:00:08,253 --> 00:00:12,041
+So we made the form four fields, and let the phone do the intake.
+
+5
+00:00:13,160 --> 00:00:14,219
+This is Nota Intake.
+
+6
+00:00:14,269 --> 00:00:22,422
+The client picks their language, leaves a name and number, and the interview language follows the phone number, straight from CALL-E's region table.
+
+7
+00:00:22,472 --> 00:00:24,917
+A US number gets English or Bahasa Indonesia.
+
+8
+00:00:24,967 --> 00:00:26,580
+A Mexican number gets Spanish.
+
+9
+00:00:26,630 --> 00:00:29,573
+The page tells you honestly what your number supports.
+
+10
+00:00:30,760 --> 00:00:33,868
+Submit, and within a minute CALL-E calls the client back.
+
+11
+00:00:36,600 --> 00:00:44,420
+This is a real call from our tests, reconstructed from the CALL-E transcript with a synthetic voice, since CALL-E doesn't return audio.
+
+12
+00:00:44,470 --> 00:00:56,020
+It confirms the name, states that this is intake and not legal advice, then works through the matter, the other party for the conflict check, deadlines, urgency, best time to reach them, and consent.
+
+13
+00:01:48,960 --> 00:01:52,162
+Thirty seconds after the call, the paralegal has this.
+
+14
+00:01:52,212 --> 00:02:01,075
+Matter type, a summary, the opposing party's name for the conflict check, urgency, consent, and the full transcript, with CALL-E's confidence score.
+
+15
+00:02:01,125 --> 00:02:02,761
+Completion confidence: high.
+
+16
+00:02:02,360 --> 00:02:04,329
+Same number, different language.
+
+17
+00:02:04,379 --> 00:02:08,367
+This is the Bahasa Indonesia call, also real, also on a US line.
+
+18
+00:02:08,417 --> 00:02:12,469
+Adding a language is one row in a JSON file and one script block.
+
+19
+00:02:12,880 --> 00:02:21,270
+One click schedules a consultation reminder call, in the client's language, with its own result schema: confirmed, or a reschedule request.
+
+20
+00:02:21,440 --> 00:02:22,995
+One limit, stated plainly.
+
+21
+00:02:23,045 --> 00:02:25,834
+CALL-E does not carry Spanish on US lines yet.
+
+22
+00:02:25,884 --> 00:02:29,290
+We tried the locale, the task text, and the MCP planner.
+
+23
+00:02:29,340 --> 00:02:31,389
+All three declined before dialing.
+
+24
+00:02:31,439 --> 00:02:33,858
+The Spanish script is written and wired;
+
+25
+00:02:33,908 --> 00:02:38,178
+until it's enabled, those callers go to a human, and the form says so.
+
+26
+00:02:39,320 --> 00:02:39,999
+No servers.
+
+27
+00:02:40,049 --> 00:02:47,284
+Cloudflare Pages, a few Functions, KV, and the CALL-E API with result schemas, webhooks, and idempotency keys.
+
+28
+00:02:47,334 --> 00:02:50,066
+Repo and live link are in the description.
+
+29
+00:02:50,116 --> 00:02:51,391
+This is Nota Intake.
