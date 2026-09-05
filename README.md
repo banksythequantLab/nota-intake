@@ -39,10 +39,18 @@ The interview language is chosen per phone number from CALL-E's published
 [Supported Regions and Languages](https://github.com/CALLE-AI/call-e-integrations#supported-regions-and-languages)
 table (42 countries, `public/regions.json`). The form shows the caller which languages their number supports.
 
-Verified by live calls on 2026-09-04: **US (+1) numbers accept `en-US` and reject Spanish** (`es`, `es-US`,
-`es-MX`, even with `region: "MX"`) with `call_not_ready` before dialing. Spanish interviews currently run
-for Mexico (local line), Spain and Honduras (international lines). The Spanish script is complete and wired;
-the day CALL-E enables Spanish on US lines, the only change is one row in `regions.json`.
+Verified by live calls (2026-09-04/05):
+
+- **US (+1) numbers: English and Bahasa Indonesia** (`en-US`, `id`). Both ran real intake calls.
+- **US numbers reject Spanish** — via REST `locale` (`es`, `es-US`, `es-MX`, even with `region: "MX"`),
+  via Spanish task text with `locale: "en-US"` (the planner catches the intent), and via MCP
+  `plan_call --language Spanish` (offers "English or Bahasa for US" instead). It's a per-line capability,
+  not a validation gap. Spanish interviews currently run for Mexico (local line), Spain and Honduras.
+- **Language is locked per call.** In the Bahasa test the bot offered to switch to English when asked and
+  then couldn't — STT and TTS run in the call's locale. The form's language choice is binding.
+
+The Spanish script is complete and wired; the day CALL-E enables Spanish on US lines, the only change is one
+row in `regions.json`. Adding any language = one row there + one script block in `functions/_intake.js`.
 
 ## Architecture
 
