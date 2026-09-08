@@ -2,7 +2,7 @@
 
 **The form is four fields. The phone call is the intake.**
 
-A prospective client leaves their name and number on a web form (English or Spanish). Within a minute,
+A prospective client picks a topic and leaves their name and number on a three-step form (English, Spanish or Bahasa Indonesia). Within a minute,
 a CALL-E agent calls them back, runs a structured legal-intake interview in the language their number
 supports, and returns a record an intake paralegal can act on: matter type, summary, the other party's
 name for the conflict check, deadlines, urgency, best time to reach them, confirmed email, and consent.
@@ -11,6 +11,24 @@ The attorney reviews it in a small console and schedules a consultation-reminder
 Live demo: **https://nota-intake.pages.dev** (form) · `/review` (attorney console, token-protected)
 
 Built for the CALL-E *"Your Code Is Calling"* hackathon by Nota.Lawyer / Derek Soltis.
+
+## Matter types
+
+The client picks a topic — **real estate, will, trust, lawsuit, or something else** — and that choice plans the
+call. Each type has its own questions and its own result fields on top of the common intake (`functions/_matters.js`):
+a lawsuit intake asks which side they're on, whether court papers arrived and what deadline they state; a will intake
+asks about family, an existing will and an executor; real estate asks for the property, their role and a closing date;
+a trust asks what it should accomplish and who the beneficiaries are (relationships only, never amounts or health).
+Scripts and fields exist in English, Spanish and Bahasa Indonesia. Adding a type is one entry in that file.
+
+## Staff console (`/review`)
+
+Token-gated. Staff can **call a client from the desk** (walk-ins, voicemails, phone leads): name, phone, topic,
+language, optional note → a confirmation step → the panel follows the call live until the interview lands.
+Records are filterable by topic and status, searchable by name, phone or other party, and each shows the
+common fields, the type-specific column, CALL-E's summary and confidence, and the transcript. A date-time picker
+places a **consultation reminder call** in the client's language; its outcome (confirmed / can't make it /
+reschedule request) syncs back onto the record.
 
 ## Why phone, not form
 
