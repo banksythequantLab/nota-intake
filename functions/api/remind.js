@@ -1,4 +1,5 @@
-// POST /api/remind?token=…  {id, when}  — schedule a consultation reminder call in the client's language
+// POST /api/remind?token=…  {id, when}  — place a consultation reminder call now, in the client's language.
+// `when` is the consultation date/time in words (the console formats the picker value); it is spoken on the call.
 import { json } from "../_lib.js";
 import { reminderTask, scriptLang, REMINDER_SCHEMA } from "../_intake.js";
 
@@ -11,7 +12,7 @@ export async function onRequestPost({ request, env }) {
   const rec = JSON.parse(raw);
   const lang = scriptLang(rec.form.locale);
   const name = rec.result?.full_name || rec.form.name;
-  const key = `${id}_rem_${rec.reminders.length + 1}`;
+  const key = `${id}_rem_${(rec.reminders || []).length + 1}`;
 
   const res = await fetch(`${env.CALLE_BASE_URL || "https://api.heycall-e.com"}/v1/calls`, {
     method: "POST",
@@ -27,7 +28,8 @@ export async function onRequestPost({ request, env }) {
   if (!res.ok || calle.status === "failed") {
     return json({ error: "calle_rejected", message: calle?.error?.message || calle?.failure_message }, 502);
   }
-  rec.reminders.push({ call_id: calle.id, when, created_at: new Date().toISOString(), status: calle.status });
+  rec.reminders = rec.reminders || [];
+  rec.reminders.push({ call_id: calle.id, when, created_at: new Date().toISOString(), calle_status: calle.status, status: "calling", result: null });
   await env.INTAKES.put(id, JSON.stringify(rec));
   return json({ ok: true, call_id: calle.id });
 }

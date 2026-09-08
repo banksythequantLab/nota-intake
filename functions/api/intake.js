@@ -14,6 +14,7 @@ export async function onRequestPost({ request, env }) {
   const matterType = MATTER_IDS.includes(body.matter_type) ? body.matter_type : "other";
   const matterHint = (body.matter || "").trim().slice(0, 500);
   const email = (body.email || "").trim().slice(0, 120);
+  const source = body.source === "staff" ? "staff" : "web";   // staff console or the public form
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json({ error: "bad_email" }, 400);
   if (!name || !/^\+\d{8,15}$/.test(phone) || body.consent !== true) {
     return json({ error: "missing_fields" }, 400);
@@ -52,7 +53,7 @@ export async function onRequestPost({ request, env }) {
 
   const record = {
     id, created_at: new Date().toISOString(), status: "calling",
-    form: { name, phone, email, lang, matter_type: matterType, matter: matterHint, locale: chosen[0], region: reg.region },
+    form: { name, phone, email, lang, matter_type: matterType, matter: matterHint, locale: chosen[0], region: reg.region, source },
     call_id: calle.id, calle_status: calle.status, result: null, transcript: null, summary: null,
     reminders: [],
   };
