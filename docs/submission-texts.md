@@ -39,13 +39,15 @@ Stack: Cloudflare Pages + Functions + KV, no framework, no build step. MIT.
 
 **Contribution area:** Apps (`apps/web/nota-intake`)
 
-**PR URL:** (filled in after the PR opens)
+**PR URL:** https://github.com/CALLE-AI/awesome-phone-call-agents/pull/393
 
 **Demo video:** VIDEO_URL
 
 **CALL-E account email:** dj@soltis.info
 
-**Functional demo URL:** https://nota-intake.pages.dev
+**Functional demo URL:** https://nota-intake.pages.dev/?code=calle-judge-2026
+
+**Demo access (put this at the top of the description):** The live demo places real phone calls, so it is behind a shared access code. Use this link: https://nota-intake.pages.dev/?code=calle-judge-2026 — the form then calls the number you enter within about a minute. The plain address shows the form but will not dial without the code.
 
 **Description:**
 
@@ -82,17 +84,20 @@ Thanks for the bounded list — both items are addressed in b19c218.
 
 README has a new "Authorization and safety" section covering the above plus cancellation.
 
-## 5. Pre-demo checklist (run on vesper from D:\nota-intake)
+## 5. Demo access — done 2026-09-11
 
-1. Remove the stray test record placed 2026-09-11 during deploy propagation (call already failed; +1 917 555 0100 is a reserved number):
-   ```
-   npx wrangler kv key delete --namespace-id 11862678fb264e8994d79f4c01c67851 intake_5f78a951-4db3-48c3-ad6d-0cb7cda6fea4
-   npx wrangler kv key delete --namespace-id 11862678fb264e8994d79f4c01c67851 bycall:call_OyuujO2KYKefZ5nEkKNoDA
-   ```
-2. Lock dialing to your own number for the demo deployment (paste your E.164 cell when prompted):
-   ```
-   npx wrangler pages secret put ALLOWED_RECIPIENTS --project-name nota-intake
-   ```
-   Remove it after judging with `npx wrangler pages secret delete ALLOWED_RECIPIENTS --project-name nota-intake`.
-3. Optional: `INTAKE_ACCESS_CODE` the same way, then share the form as `https://nota-intake.pages.dev/?code=<value>` so only judges can trigger calls.
-4. Sanity check after any secret change: submit the form once from your phone number; the review console should show the record within a minute.
+The form is locked with a shared access code so only people with the link can trigger a call. The site itself stays open.
+
+- Code: `calle-judge-2026` (Pages secret `INTAKE_ACCESS_CODE`; separate from the review token)
+- Link to give judges and the PR reviewer: https://nota-intake.pages.dev/?code=calle-judge-2026
+- Without the code the form shows "This demo is locked..." (EN/ES/ID) instead of calling. Verified live.
+- Staff console at /review is unchanged (review token).
+
+To change or remove the code later, from D:\nota-intake:
+```
+"NEW-CODE" | npx wrangler pages secret put INTAKE_ACCESS_CODE --project-name nota-intake
+npx wrangler pages secret delete INTAKE_ACCESS_CODE --project-name nota-intake
+```
+
+Still to do by hand: paste the "Demo access" line into the Devpost description and add the link to the PR #393 thread.
+The stray "Test Person" record from 2026-09-11 is being left in place (it reads as junk).
