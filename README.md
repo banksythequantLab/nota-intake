@@ -96,8 +96,9 @@ and never receives CALL-E's raw payloads or evidence blobs. The webhook stores o
 `CALLE_API_KEY`, `REVIEW_TOKEN` and `WEBHOOK_SECRET` live only as Pages secrets (locally `.dev.vars`) and are never
 sent to a browser; the CALL-E key is used exclusively server-to-server from Pages Functions.
 
-Cancellation: a call already handed to CALL-E is cancelled from the CALL-E dashboard or `DELETE /v1/calls/{id}`.
-The app never schedules recurring calls; a reminder is one explicit click per call.
+Cancellation: the public CALL-E API exposes create and read only (no cancel endpoint), so a call already handed
+to CALL-E is stopped from the CALL-E dashboard; provider-side blocklists and kill switches apply. The app never
+schedules recurring calls; a reminder is one explicit click per call, and the daily cap bounds the blast radius.
 
 ## Architecture
 
