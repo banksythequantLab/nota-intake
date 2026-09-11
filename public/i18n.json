@@ -56,7 +56,8 @@
     "d_a1": "An attorney at Nota.Lawyer reviews your answers.",
     "d_a2": "The firm follows up by phone or email to set up your consultation.",
     "d_note": "Missed the call? Just submit the form again and we'll call back.",
-    "foot": "Which languages we can call in depends on the country of your phone number. Nothing on this page or on the call is legal advice."
+    "foot": "Which languages we can call in depends on the country of your phone number. Nothing on this page or on the call is legal advice.",
+    "err_code": "This demo is locked. Open the link the firm gave you (it ends in ?code=...) to place a call."
   },
   "es": {
     "h1": "Díganos qué necesita. <em>Le llamamos en un minuto.</em>",
@@ -115,7 +116,8 @@
     "d_a1": "Un abogado de Nota.Lawyer revisa sus respuestas.",
     "d_a2": "El despacho se comunica por teléfono o correo para programar su consulta.",
     "d_note": "¿Perdió la llamada? Envíe el formulario de nuevo y volveremos a llamar.",
-    "foot": "Los idiomas disponibles dependen del país de su número. Nada en esta página ni en la llamada es asesoría legal."
+    "foot": "Los idiomas disponibles dependen del país de su número. Nada en esta página ni en la llamada es asesoría legal.",
+    "err_code": "Esta demostración está bloqueada. Abra el enlace que le dio el despacho (termina en ?code=...) para hacer la llamada."
   },
   "id": {
     "h1": "Ceritakan kebutuhan Anda. <em>Kami telepon balik dalam satu menit.</em>",
@@ -174,6 +176,7 @@
     "d_a1": "Seorang pengacara di Nota.Lawyer meninjau jawaban Anda.",
     "d_a2": "Firma menghubungi lewat telepon atau email untuk mengatur konsultasi Anda.",
     "d_note": "Terlewat panggilannya? Kirim formulir lagi dan kami akan menelepon kembali.",
-    "foot": "Bahasa yang tersedia bergantung pada negara nomor telepon Anda. Tidak ada di halaman ini atau di panggilan yang merupakan nasihat hukum."
+    "foot": "Bahasa yang tersedia bergantung pada negara nomor telepon Anda. Tidak ada di halaman ini atau di panggilan yang merupakan nasihat hukum.",
+    "err_code": "Demo ini terkunci. Buka tautan yang diberikan firma (diakhiri dengan ?code=...) untuk melakukan panggilan."
   }
 }
